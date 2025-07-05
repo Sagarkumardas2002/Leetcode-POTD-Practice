@@ -8,10 +8,13 @@ public:
 
         int largestLucky = -1;
         for (auto it : mp) {
+            int number = -1; 
             if (it.first == it.second) {
-                largestLucky = max(largestLucky, it.first);
+                number = it.first;
             }
+            largestLucky = max(largestLucky, number);
         }
+
         return largestLucky;
     }
 };
