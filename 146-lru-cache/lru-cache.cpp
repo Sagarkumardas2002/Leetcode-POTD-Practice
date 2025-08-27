@@ -1,55 +1,56 @@
+
 class LRUCache {
 public:
-    list<int> dll; // Doubly linked list of keys (front = MRU, back = LRU)
-    // Map: key -> {iterator to dll node, value}
-    unordered_map<int, pair<list<int>::iterator, int>> cache; 
-    int capacity;
+    list<int> dll; // Doubly linked list to store keys (front = most recent, back = least recent)
+    map<int, pair<list<int>::iterator, int>> cache; // key -> (iterator pointing to dll node, value)
+    int capacity; // Maximum capacity of cache
 
-    // Constructor
-    LRUCache(int capacity) { 
-        this->capacity = capacity; 
+    // Constructor to initialize LRU Cache with given capacity
+    LRUCache(int capacity) {
+        this->capacity = capacity;
     }
 
-    // Move key to front (mark as MRU)
+    // Function to move a key to the front of the DLL (mark it as most recently used)
     void makeMostRecentlyUsed(int key) {
-        dll.erase(cache[key].first);   // remove old position
-        dll.push_front(key);           // move to front
-        cache[key].first = dll.begin();// update iterator
+        dll.erase(cache[key].first);   // Remove the key from its current position
+        dll.push_front(key);           // Insert it at the front (most recent)
+        cache[key].first = dll.begin(); // Update iterator in cache map
     }
 
-    // Get value for a given key
+    // Function to get the value of a key
     int get(int key) {
-        unordered_map<int, pair<list<int>::iterator, int>>::iterator it = cache.find(key);
+        // Look for the key in cache using find()
+        map<int, pair<list<int>::iterator, int>>::iterator it = cache.find(key);
+
         if (it == cache.end()) {
-            return -1; // not found
+            return -1; // Key not found
         }
 
-        // Mark as MRU
-        makeMostRecentlyUsed(key);
-        return it->second.second; // return value
+        makeMostRecentlyUsed(key);     // Since it's accessed, mark it as most recently used
+        return cache[key].second;      // Return the value
     }
 
-    // Insert or update a key-value pair
+    // Function to insert or update a key-value pair
     void put(int key, int value) {
-        unordered_map<int, pair<list<int>::iterator, int>>::iterator it = cache.find(key);
-
+        // Case 1: Key already exists → update value and move to front
+        map<int, pair<list<int>::iterator, int>>::iterator it = cache.find(key);
         if (it != cache.end()) {
-            // Key exists -> update value & move to MRU
-            it->second.second = value;
-            makeMostRecentlyUsed(key);
-        } else {
-            // Insert new key at front (MRU)
-            dll.push_front(key);
-            cache[key] = {dll.begin(), value};
-            capacity--;
+            cache[key].second = value;  // Update value
+            makeMostRecentlyUsed(key);  // Move to most recently used
+        }
+        // Case 2: Key does not exist → insert new key
+        else {
+            dll.push_front(key);             // Insert key at front
+            cache[key] = make_pair(dll.begin(), value); // Store iterator + value in map
+            capacity--;                      // Reduce capacity
         }
 
-        // If over capacity -> remove LRU
+        // If cache exceeds capacity, remove least recently used (from back)
         if (capacity < 0) {
-            int lruKey = dll.back();   // last element = LRU
-            dll.pop_back();            // remove from list
-            cache.erase(lruKey);       // erase from map
-            capacity++;
+            int leastRecentKey = dll.back(); // Get least recent key
+            dll.pop_back();                  // Remove from list
+            cache.erase(leastRecentKey);     // Erase from map
+            capacity++;                      // Restore capacity
         }
     }
 };
