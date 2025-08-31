@@ -10,12 +10,15 @@ public:
             int width = right - left;
             int height = min(nums[left], nums[right]);
             int water = width * height;
+
+            // take the maximum area found so far
             maxWater = max(maxWater, water);
 
-            if (nums[left] > nums[right]) {
-                right--;
-            } else {
+            // move the pointer pointing to the shorter line
+            if (nums[left] < nums[right]) {
                 left++;
+            } else {
+                right--;
             }
         }
         return maxWater;
