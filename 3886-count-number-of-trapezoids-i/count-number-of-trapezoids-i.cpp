@@ -3,7 +3,7 @@ public:
     static const long long MOD = 1e9 + 7;
 
     int countTrapezoids(vector<vector<int>>& points) {
-        unordered_map<long long, long long> countY;
+        unordered_map<int, long long> countY;
 
         // Count points at each y-level
         for (auto &p : points) {
