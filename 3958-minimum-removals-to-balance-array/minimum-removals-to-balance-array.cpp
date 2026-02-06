@@ -5,7 +5,7 @@ public:
         int n = nums.size();
         int i = 0;
         for (int j = 0; j < n; j++){
-            if (i < j && (long long)nums[j] > (long long)nums[i] * k){
+            if (i <= j && (long long)nums[j] > (long long)nums[i] * k){
                 i++;
             }
         }
